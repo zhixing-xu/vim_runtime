@@ -38,6 +38,7 @@ filetype plugin on
 filetype indent on
 
 " Set to auto read when a file is changed from the outside
+" Ensures that Vim checks for changes whenever it gains focus or you switch buffers
 set autoread
 au FocusGained,BufEnter * silent! checktime
 
@@ -50,6 +51,8 @@ nmap <leader>w :w!<cr>
 
 " :W sudo saves the file
 " (useful for handling the permission-denied error)
+" tee reads the input one and duplicates it to two output files,
+" stdout and files specified on the command line
 command! W execute 'w !sudo tee % > /dev/null' <bar> edit!
 
 
@@ -57,6 +60,7 @@ command! W execute 'w !sudo tee % > /dev/null' <bar> edit!
 " => VIM user interface
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Set 7 lines to the cursor - when moving vertically using j/k
+" lines visble in the moving direction
 set so=7
 
 " Avoid garbled characters in Chinese language windows OS
@@ -66,6 +70,7 @@ source $VIMRUNTIME/delmenu.vim
 source $VIMRUNTIME/menu.vim
 
 " Turn on the Wild menu
+" Show possible matchs through Tab
 set wildmenu
 
 " Ignore compiled files
@@ -83,6 +88,7 @@ set ruler
 set cmdheight=1
 
 " A buffer becomes hidden when it is abandoned
+" You can switch buffers freely, even if the current buffer has unsaved changes.
 set hid
 
 " Configure backspace so it acts as it should act
@@ -93,18 +99,23 @@ set whichwrap+=<,>,h,l
 set ignorecase
 
 " When searching try to be smart about cases
+" Case-insensitive if your search pattern contains only lowercase characters.
+" Case-sensitive if your search pattern contains any uppercase characters.
+" Overrides ignorecase when the search pattern contains uppercase letters.
 set smartcase
 
 " Highlight search results
 set hlsearch
 
 " Makes search act like search in modern browsers
+" Go to the first search result automatically
 set incsearch
 
 " Don't redraw while executing macros (good performance config)
 set lazyredraw
 
 " For regular expressions turn magic on
+" No need to add \ before regex characters (like *, +, ?, |, etc.)
 set magic
 
 " Show matching brackets when text indicator is over them
@@ -180,6 +191,8 @@ set noswapfile
 set expandtab
 
 " Be smart when using tabs ;)
+" When pressing <Tab> at the beginning of a line (before any text),
+" Vim inserts spaces or tabs based on the value of shiftwidth instead of tabstop
 set smarttab
 
 " 1 tab == 4 spaces
@@ -187,7 +200,7 @@ set shiftwidth=4
 set tabstop=4
 
 " Linebreak on 500 characters
-set lbr
+set lbr "Don't break words
 set tw=500
 
 set ai "Auto indent
@@ -200,6 +213,7 @@ set wrap "Wrap lines
 """"""""""""""""""""""""""""""
 " Visual mode pressing * or # searches for the current selection
 " Super useful! From an idea by Michael Naumann
+" Forward and backward search
 vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
 vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
 
@@ -250,6 +264,7 @@ map <leader>te :tabedit <C-r>=escape(expand("%:p:h"), " ")<cr>/
 map <leader>cd :cd %:p:h<cr>:pwd<cr>
 
 " Specify the behavior when switching between buffers
+" Don't open new one if the buffer is already in some tab
 try
   set switchbuf=useopen,usetab,newtab
   set stal=2
@@ -277,6 +292,7 @@ set statusline=\ %{HasPaste()}%F%m%r%h\ %w\ \ CWD:\ %r%{getcwd()}%h\ \ \ Line:\ 
 map 0 ^
 
 " Move a line of text using ALT+[jk] or Command+[jk] on mac
+" Doesn't seem to work
 nmap <M-j> mz:m+<cr>`z
 nmap <M-k> mz:m-2<cr>`z
 vmap <M-j> :m'>+<cr>`<my`>mzgv`yo`z
@@ -299,7 +315,7 @@ fun! CleanExtraSpaces()
 endfun
 
 if has("autocmd")
-    autocmd BufWritePre *.txt,*.js,*.py,*.wiki,*.sh,*.coffee :call CleanExtraSpaces()
+    autocmd BufWritePre *.txt,*.js,*.py,*.wiki,*.sh,*.coffee,*.vim :call CleanExtraSpaces()
 endif
 
 
@@ -312,7 +328,9 @@ map <leader>ss :setlocal spell!<cr>
 " Shortcuts using <leader>
 map <leader>sn ]s
 map <leader>sp [s
+" Add to existing dic
 map <leader>sa zg
+" Suggest from a list
 map <leader>s? z=
 
 
